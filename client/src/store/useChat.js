@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import toast from "react-hot-toast";
-import axiosInstance from "../api/axiosInstance";
 import { useAuthStore } from "./useAuth";
 import {
     getMessagesApi,
