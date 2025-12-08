@@ -8,7 +8,7 @@ const PREVIEW_MESSAGES = [
     { id: 2, content: "I'm doing great! Just working on some new features.", isSent: true },
 ];
 
-const Themes = () => {
+const SettingsPage = () => {
     const { theme, setTheme } = useThemeStore();
 
     return (
@@ -114,4 +114,4 @@ const Themes = () => {
         </div>
     );
 };
-export default Themes
+export default SettingsPage

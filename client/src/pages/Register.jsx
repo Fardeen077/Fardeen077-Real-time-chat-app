@@ -9,7 +9,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ username: "", email: "", password: "" });
 
-  const {signup, isSigningUp} =useAuthStore();
+  const { signup, isSigningUp } = useAuthStore();
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -90,6 +90,7 @@ const Register = () => {
         <button
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition cursor-pointer"
+          disabled={isSigningUp}
         >
           Register
         </button>
