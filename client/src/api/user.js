@@ -1,17 +1,17 @@
-import axiosInstance from "./axiosInstance";
+import axiosMessage from "./axiosMessage"
 
 const getUsersApi = async () => {
-    const response = await axiosInstance.get("/users");
+    const response = await axiosMessage.get("/users");
     return response.data;
 };
 
 const getMessagesApi = async (id) => {
-    const response = await axiosInstance.get(`/message/${id}`);
+    const response = await axiosMessage.get(`/message/${id}`);
     return response.data;
 };
 
 const sendMessageApi = async (message, id) => {
-    const response = await axiosInstance.post(`/send/${id}`, message);
+    const response = await axiosMessage.post(`/send/${id}`, message);
     return response.data;
 };
 

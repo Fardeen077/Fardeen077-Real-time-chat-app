@@ -1,9 +1,16 @@
 import { create } from "zustand";
 import { io } from "socket.io-client";
 import toast from "react-hot-toast";
-import { checkAuthApi, registerApi, loginApi, logoutApi, updateProfileApi } from "../api/auth";
+import {
+    checkAuthApi,
+    updateProfileApi,
+    logoutApi,
+    loginApi,
+    registerApi,
+} from "../api/auth";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
+// console.log("CHECK AUTH URL =>", import.meta.env.VITE_BACKEND_URL + "/api/auth/check",);
 
 export const useAuthStore = create((set, get) => ({
     authUser: null,
@@ -19,8 +26,11 @@ export const useAuthStore = create((set, get) => ({
             // 2 User data set in zustand 
             // 3 socket conn after auth success
             const response = await checkAuthApi();
-            set({ authUser: response.data });
             console.log("AUTH RESPONSE => ", response);
+            set({ authUser: response.data });
+            console.log(response.data);
+            
+            
             get().connectSocket()
         } catch (error) {
             console.log("Error in checkAuth:", error);
@@ -34,7 +44,7 @@ export const useAuthStore = create((set, get) => ({
         set({ isSigningUp: true });
         try {
             const response = await registerApi(userData);
-            set({ authUser: response.data });
+            set({ authUser: response.data.data });
             toast.success("Account created Successfully");
             get().connectSocket();
         } catch (error) {
@@ -45,12 +55,13 @@ export const useAuthStore = create((set, get) => ({
         }
     },
 
-    login: async () => {
+    login: async (userData) => {
         set({ isLoggingIn: true });
         try {
-            const response = await loginApi();
-            set({ authUser: response.data });
+            const response = await loginApi(userData);
+            set({ authUser: response.data.user });
             toast.success("Logged in Successfully");
+            console.log("user data", userData);    
             get().connectSocket();
         } catch (error) {
             toast.error(error.response?.data?.message || "Login failed");
@@ -65,7 +76,7 @@ export const useAuthStore = create((set, get) => ({
             set({ authUser: null });
             toast.success("Logged Out Successfully");
             get().disconnectSocket();
-          } catch (error) {
+        } catch (error) {
             toast.error("Logout failed");
         }
     },
@@ -74,7 +85,7 @@ export const useAuthStore = create((set, get) => ({
         set({ isUpdatingProfile: true });
         try {
             const response = await updateProfileApi(userData);
-            set({ authUser: response.data });
+            set({ authUser: response.data.data });
             toast.success("Profile updated Successfully");
         } catch (error) {
             console.log("error in update profile:", error);

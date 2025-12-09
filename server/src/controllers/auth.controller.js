@@ -82,8 +82,11 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict"
+        secure: false,     // ONLY false in localhost
+        sameSite: "none"    // strict breaks cross-origin cookies
+
+        // secure: process.env.NODE_ENV === "production",
+        // sameSite: "strict"
     }
     return res.status(200)
         .cookie("accessToken", accessToken, options)

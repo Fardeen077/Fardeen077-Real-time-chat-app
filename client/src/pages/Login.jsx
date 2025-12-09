@@ -1,81 +1,114 @@
-import React, { useState } from "react";
-import { login as loginUser } from "../api/authApi"
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useAuthStore } from "../store/useAuth";
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Loader2, Lock, Mail, MessageSquare } from "lucide-react";
 
 const Login = () => {
-    const navigate = useNavigate();
-    const dispatch = useAuthStore();
-    const [formData, setFormData] = useState({ email: "", password: "", });
-    const [error, setError] = useState("");
+  const navigate = useNavigate()
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const { login, isLoggingIn } = useAuthStore();
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    // console.log("data", formData);
+    const res = await login(formData);
+    if (res?.success) {
+      navigate("/");
+    }
+  };
 
-        try {
-            const data = await loginUser(formData);
-            // const token = data?.data.accessToken;
-            const token = data?.data?.accessToken;
-            const user = data?.data?.user;
-
-            if (token && user) {
-                // 💾 store token and user
-                localStorage.setItem("token", token);
-                localStorage.setItem("user", JSON.stringify(user));
-            }
-            // Optionally store user details
-            // localStorage.setItem("user", JSON.stringify(res.data.user));
-            console.log("login", token);
-            dispatch(setUser(data.data.user)); // save user in Redux
-            // console.log(dispatch(setUser(data.data.user)));
-
-            navigate("/"); // redirect to home/dashboard
-        } catch (err) {
-            setError(err.response?.data?.message || "Login failed");
-        }
-    };
-
-    return (
-        <div className="max-w-md mx-10 p-4 border rounded mt-24 md:mx-auto">
-            <h1 className="text-2xl font-bold  mb-4 flex justify-center">Login</h1>
-            {error && <p className="text-red-500 mb-2">{error}</p>}
-            <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="border p-2 rounded"
-                    required
-                />
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="border p-2 rounded"
-                    required
-                />
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-600 transition-all mt-5">
-                    Login
-                </button>
-            </form>
-
-            <p className="text-sm text-center text-gray-600 mb-4">
-                Already have account? {""}
-                <span onClick={() => navigate("/register")}
-                    className="text-blue-500 cursor-pointer hover:underline">
-                    register
-                </span>
-            </p>
+  return (
+    <div className="h-screen flex justify-center items-center">
+      {/* Left Side - Form */}
+      <div className="w-full max-w-md space-y-8 p-6 sm:p-12">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div className="flex flex-col items-center gap-2 group">
+            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+              <MessageSquare className="w-6 h-6 text-primary" />
+            </div>
+            <h1 className="text-2xl font-bold mt-2">Welcome Back</h1>
+            <p className="text-base-content/60">Sign in to your account</p>
+          </div>
         </div>
-    );
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Email</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Mail className="h-5 w-5 text-base-content/40" />
+              </div>
+              <input
+                type="email"
+                className="input input-bordered w-full pl-10"
+                placeholder="you@example.com"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-medium">Password</span>
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-base-content/40" />
+              </div>
+              <input
+                type={showPassword ? "text" : "password"}
+                className="input input-bordered w-full pl-10 py-3 text-lg"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5 text-base-content/40" />
+                ) : (
+                  <Eye className="h-5 w-5 text-base-content/40" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" className="btn btn-primary w-full py-3 text-lg" disabled={isLoggingIn}>  {/* Increased button height */}
+            {isLoggingIn ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              "Login"
+            )}
+          </button>
+        </form>
+
+        <div className="text-center">
+          <p className="text-base-content/60">
+            Don&apos;t have an account?{" "}
+            <Link to="/register" className="link link-primary">
+              Create account
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Login;
