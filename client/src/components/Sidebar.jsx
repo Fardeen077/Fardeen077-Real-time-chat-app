@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useChatStore } from '../store/useChat'
 import { useAuthStore } from '../store/useAuth'
-import  SidebarSkeleton  from "./skeletons/SidebarSkeleton"
+import SidebarSkeleton from "./skeletons/SidebarSkeleton"
 import { Users } from 'lucide-react'
 
 function Sidebar() {
@@ -20,7 +20,7 @@ function Sidebar() {
         getUsers();
     }, [getUsers]);
 
-    const filteredUser = showOnlineOnly ? users.filter((user) => onlineUsers.include(user._id)) : users;
+    const filteredUser = showOnlineOnly ? users.filter((user) => onlineUsers.includes(user._id)) : users;
 
     if (isUsersLoading) return <SidebarSkeleton />
 
@@ -36,7 +36,7 @@ function Sidebar() {
                 {/* Online filter */}
                 <div className="mt-3 hidden lg:flex items-center gap-2">
                     <label className="cursor-pointer flex items-center gap-2">
-                        <input  li
+                        <input li
                             type="checkbox"
                             checked={showOnlineOnly}
                             onChange={(e) => setShowOnlineOnly(e.target.checked)}
@@ -49,22 +49,23 @@ function Sidebar() {
                 </div>
             </div>
 
-            <div>
+            <div className="overflow-y-auto w-full py-3">
                 {filteredUser.map((user) => (
                     <button className={` w-full p-3 flex items-center gap-3
-              hover:bg-base-300 transition-colors ${selectedUser?._id === user._id ? "bg-green-300 ring-1 ring-base-300" : ""}`}
-                        onClick={setSelectedUser(user)}>
+              hover:bg-base-300 transition-colors ${selectedUser?._id === user._id ? "bg-base-300 ring-1 ring-base-300" : ""}`}
+                        onClick={() => setSelectedUser(user)}>
+
                         <div className='relative mx-auto lg:mx-0'>
                             <img src={user.profileImage} alt="profileImage" className="size-12 object-cover rounded-full" />
 
                             {/* show online user in list */}
 
-                            {(onlineUsers || [].includes(user._id) && (
+                            {(onlineUsers || []).includes(user._id) && (
                                 <span
                                     className="absolute bottom-0 right-0 size-3 bg-green-500 
                   rounded-full ring-2 ring-zinc-900"
                                 />
-                            ))}
+                            )}
                         </div>
 
                         <div className='hidden lg:block text-left min-w-0'>

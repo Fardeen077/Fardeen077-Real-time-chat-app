@@ -35,7 +35,7 @@ function Profile() {
               <img src={selectedImg || authUser.profileImage || "/avatar.png"} alt="Profile"
                 className="size-32 rounded-full object-cover border-4 " />
               <label htmlFor="avatar-upload">
-                <Camera className="w-5 h-5 text-base-200" />
+                <Camera className="w-5 h-5" />
                 <input type="file"
                   id="avatar-upload"
                   className="hidden"

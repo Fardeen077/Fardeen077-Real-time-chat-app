@@ -18,7 +18,7 @@ export const useChatStore = create((set, get) => ({
         set({ isUsersLoading: true });
         try {
             const response = await getUsersApi();
-            set({ users: response });
+            set({ users: response.data });
         } catch (error) {
             toast.error(error?.response?.data?.message || "Fetching users failed");
         } finally {
@@ -32,7 +32,7 @@ export const useChatStore = create((set, get) => ({
         set({ isMessagesLoading: true });
         try {
             const response = await getMessagesApi(selectedUser._id);
-            set({ messages: response });
+            set({ messages: response.data });
         } catch (error) {
             toast.error(error?.response?.data?.message || "message is not Recived");
         } finally {
@@ -45,21 +45,23 @@ export const useChatStore = create((set, get) => ({
         if (!selectedUser) return;
         try {
             const response = await sendMessageApi(messageData, selectedUser._id);
-            set({ messages: [...messages, response] });
+            const newMessage = response.data;
+            set({ messages: [...messages, newMessage] });
+            console.log("Message sent:", newMessage);
         } catch (error) {
             toast.error(error?.response?.data?.message || "Message not Send");
         }
     },
 
     subscribeToMessages: () => {
-        const {selectedUser}= get();
-        if(!selectedUser) return;
+        const { selectedUser } = get();
+        if (!selectedUser) return;
 
         const socket = useAuthStore.getState().socket;
-        
-        socket.on("newMessage", (newMessage)=> {
+
+        socket.on("newMessage", (newMessage) => {
             const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
-            if(!isMessageSentFromSelectedUser) return;
+            if (!isMessageSentFromSelectedUser) return;
             set({
                 messages: [...get().messages, newMessage],
             });

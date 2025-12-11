@@ -80,10 +80,15 @@ const loginUser = asyncHandler(async (req, res) => {
     };
     const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
 
-    const options = {
-        httpOnly: true,
-        secure: false,     // ONLY false in localhost
-        sameSite: "none"    // strict breaks cross-origin cookies
+    const options = {  
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            path: "/"
+
+        // httpOnly: true,
+        // secure: false,     // ONLY false in localhost
+        // sameSite: "none"    // strict breaks cross-origin cookies
 
         // secure: process.env.NODE_ENV === "production",
         // sameSite: "strict"
@@ -133,7 +138,9 @@ const updateProfile = async (req, res) => {
 
 const checkAuth = (req, res) => {
     try {
-        res.status(200).json(req.user);
+        res.status(200).json(
+            new ApiResponse(200, { user: req.user }, "User authenticated")
+        );
     } catch (error) {
         console.log("ERROR in checkAuth controller", error.message);
         res.status(500).json({
