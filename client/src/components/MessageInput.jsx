@@ -8,6 +8,8 @@ const MessageInput = () => {
     const [text, setText] = useState("");
     const { sendMessage } = useChatStore();
     const [imagePreview, setimagePreview] = useState(null);
+    const [isUploading, setIsUplaoding] = useState(false);
+    const [isSending, setIsSending] = useState(false)
     const fileInputRef = useRef();
 
     // target device local image file only not pdf not url , movies file any zip file 
@@ -36,6 +38,8 @@ const MessageInput = () => {
         e.preventDefault();
         // check image or text is not present 
         if (!text.trim() && !imagePreview) return // stop code
+        if (isSending || isUploading) return
+        setIsSending(true);
 
         // send image or text
         try {
@@ -50,6 +54,8 @@ const MessageInput = () => {
             if (fileInputRef.current) fileInputRef.current.value = "";
         } catch (error) {
             console.error("Failed to send message:", error);
+        } finally {
+             setIsSending(false);
         }
     };
     return (
@@ -95,11 +101,18 @@ const MessageInput = () => {
                     </button>
                 </div>
                 <button
-                    type='submit'
-                    className='btn btn-sm btn-circle'
-                    disabled={!text.trim() && !imagePreview}
+                    type="submit"
+                    className="btn btn-sm btn-circle"
+                    disabled={
+                        (!text.trim() && !imagePreview) ||
+                        isUploading ||
+                        isSending
+                    }
                 >
-                    <Send size={22} />
+                    {(isUploading || isSending)
+                        ? <span className="loading loading-spinner loading-sm"></span>
+                        : <Send size={22} />
+                    }
                 </button>
             </form>
         </div>

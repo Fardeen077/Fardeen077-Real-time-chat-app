@@ -29,11 +29,11 @@ const userSchema = new mongoose.Schema(
             trim: true,
         },
 
-        profileImage: {
-            type: String,
-            default:
-                "https://cdn-icons-png.flaticon.com/512/847/847969.png",
-        },
+        // profileImage: {
+        //     type: String,
+        //     default:
+        //         "https://cdn-icons-png.flaticon.com/512/847/847969.png",
+        // },
 
         // Store refresh token in DB
         refreshToken: {

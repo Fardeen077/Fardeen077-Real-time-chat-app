@@ -84,7 +84,13 @@ export const useAuthStore = create((set, get) => ({
         set({ isUpdatingProfile: true });
         try {
             const response = await updateProfileApi(userData);
-            set({ authUser: response.data.data });
+            // set({ authUser: response.data });
+            set((state) => ({
+            authUser: {
+                ...state.authUser,
+                ...response.data
+            }
+        }));
             toast.success("Profile updated Successfully");
         } catch (error) {
             console.log("error in update profile:", error);

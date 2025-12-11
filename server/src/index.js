@@ -7,7 +7,7 @@ import dotenv from "dotenv"
 import authRoutes from "./routers/auth.route.js";
 import messageRoutes from "./routers/message.route.js"
 
-dotenv.config({ path: '../.env' });
+dotenv.config({ path: './.env' });
 
 
 const PORT = process.env.PORT;
