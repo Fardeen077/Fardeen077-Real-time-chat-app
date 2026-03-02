@@ -4,9 +4,13 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 import { io, getReceiverSocketId } from "../lib/socket.js";
 import { User } from '../models/user.model.js'
 import { Message } from "../models/message.model.js"
+import { ApiError } from "../utils/ApiError.js";
 
 const getUserForSidebar = asyncHandler(async (req, res) => {
-    const logggedInUserId = req.user._id;
+    const logggedInUserId = req.user?._id;
+    if (!logggedInUserId) {
+        throw new ApiError(401, "Unauthorized");
+    }
     const filteredUser = await User.find({ _id: { $ne: logggedInUserId } }).select("-password");
 
     return res.status(200).json(
