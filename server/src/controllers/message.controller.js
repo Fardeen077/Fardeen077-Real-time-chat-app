@@ -23,11 +23,23 @@ const sendMessage = asyncHandler(async (req, res) => {
     const { id: receivedId } = req.params;
     const senderId = req.user._id;
 
+    if (!text && !image) {
+        throw new ApiError(400, "Message cannot be empty")
+    }
+
+    if (senderId.toString() === receivedId) {
+        throw new ApiError(400, "You cannot message yourself");
+    }
+
     let imageUrl;
     if (image) {
-        const uploadResponse = await cloudinary.uploader.upload(image);
-        imageUrl = uploadResponse.secure_url;
-    }
+        try {
+            const uploadResponse = await cloudinary.uploader.upload(image);
+            imageUrl = uploadResponse.secure_url;
+        } catch (error) {
+            throw new ApiError(500, "Image upload failed");
+        }
+    };
 
     const newMessage = new Message({
         senderId,
@@ -40,7 +52,10 @@ const sendMessage = asyncHandler(async (req, res) => {
     const receiverSocketId = getReceiverSocketId(receivedId);
 
     if (receiverSocketId) {
-        io.to(receiverSocketId).emit("newMessage", newMessage);
+        io.to(receiverSocketId).emit("newMessage", {
+            message: newMessage,
+            senderId,
+        });
     }
     return res.status(201).json(
         new ApiResponse(201, newMessage, "Message sent successfully")
@@ -49,15 +64,15 @@ const sendMessage = asyncHandler(async (req, res) => {
 
 
 const getMessages = asyncHandler(async (req, res) => {
-    const { id: userToCartId } = req.params;
+    const { id: userToChatId } = req.params;
     const myId = req.user._id;
 
     const message = await Message.find({
         $or: [
-            { senderId: myId, receivedId: userToCartId, },
-            { senderId: userToCartId, receivedId: myId, }
+            { senderId: myId, receivedId: userToChatId, },
+            { senderId: userToChatId, receivedId: myId, }
         ]
-    });
+    }).sort({ createdAt: 1 });
     return res.status(200).json(
         new ApiResponse(200, message, "Messages fetched successfully"))
 });

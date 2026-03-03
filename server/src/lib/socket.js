@@ -5,37 +5,44 @@ import express from "express";
 const app = express();
 const server = http.createServer(app);
 
-const userSocketMap = {};
+const userToSocket = new Map();
+const socketToUser = new Map();
 
 const io = new Server(server, {
     cors: {
         origin: process.env.CLINET_URL,
         methods: ["GET", "POST"],
-    }
+    },
 });
 
-const getReceiverSocketId = (userId) => userSocketMap[userId];
+const getReceiverSocketId = (userId) => userToSocket.get(userId);
 
 io.on("connection", (socket) => {
-    console.log("A user connected", socket.id);
+    console.log("A user connenct", socket.id);
 
     const userId = socket.handshake.query.userId;
-    if (userId) userSocketMap[userId] = socket.id;
-
-    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    if (userId) {
+        userToSocket.set(userId, socket.id);
+        socketToUser.set(socket.id, userId);
+    }
+    io.emit("getOnlineUsers", Array.from(userToSocket.keys()));
 
     socket.on("disconnect", () => {
         console.log("A user disconnected", socket.id);
 
-        const userIdToRemove = Object.keys(userSocketMap)
-            .find(key => userSocketMap[key] === socket.id);
+        const userId = socketToUser.get(socket.id);
 
-        if (userIdToRemove) delete userSocketMap[userIdToRemove];
-
-        io.emit("getOnlineUsers", Object.keys(userSocketMap));
+        if (userId) {
+            userToSocket.delete(userId);
+            socketToUser.delete(socket.id);
+        }
+        io.emit("getOnlineUsers", Array.from(userToSocket.keys()));
     });
 });
 
-export { app, server, io, getReceiverSocketId };
-
-
+export {
+    app,
+    server,
+    io,
+    getReceiverSocketId,
+};

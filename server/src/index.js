@@ -10,11 +10,10 @@ import { errorHandler } from "./middlewares/error.middleware.js";
 
 dotenv.config({ path: './.env' });
 
-
 const PORT = process.env.PORT;
 
 app.use(cors({
-    origin: process.env.CLINET_URL,
+    origin: process.env.CLIENT_URL,
     credentials: true,
 }));
 
