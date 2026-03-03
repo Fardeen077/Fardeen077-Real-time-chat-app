@@ -20,7 +20,7 @@ const updateProfileApi = async (userData) => {
     return response.data;
 };
 
-const getMe = async () => {
+const getMeApi = async () => {
     const response = await axiosInstance.get("/auth/check");
     return response.data;
 };
@@ -30,5 +30,5 @@ export {
     loginApi,
     logoutApi,
     updateProfileApi,
-    getMe
+    getMeApi
 };

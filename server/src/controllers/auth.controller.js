@@ -56,13 +56,25 @@ const registerUser = asyncHandler(async (req, res) => {
         avatar: avatarUrl,
     });
 
-    const tokens = await generateAccessTokenAndRefreshToken(user._id);
+    const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
 
     const createdUser = await User.findById(user._id).select("-password -refreshToken");
     if (!createdUser) {
         throw new ApiError(500, "Error creating user !!!");
     }
-    return res.status(201).json(new ApiResponse(201, { user: createdUser, ...tokens }, "User created",));
+
+    const options = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict"
+    }
+    return res.status(201)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(new ApiResponse(201, {
+            user: createdUser,
+        },
+            "User created successfully",));
 });
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -80,18 +92,10 @@ const loginUser = asyncHandler(async (req, res) => {
     };
     const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
 
-    const options = {  
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            path: "/"
-
-        // httpOnly: true,
-        // secure: false,     // ONLY false in localhost
-        // sameSite: "none"    // strict breaks cross-origin cookies
-
-        // secure: process.env.NODE_ENV === "production",
-        // sameSite: "strict"
+    const options = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict"
     }
     return res.status(200)
         .cookie("accessToken", accessToken, options)

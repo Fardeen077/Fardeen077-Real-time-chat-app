@@ -29,11 +29,11 @@ const userSchema = new mongoose.Schema(
             trim: true,
         },
 
-        // profileImage: {
-        //     type: String,
-        //     default:
-        //         "https://cdn-icons-png.flaticon.com/512/847/847969.png",
-        // },
+        profileImage: {
+            type: String,
+            default:
+                "https://cdn-icons-png.flaticon.com/512/847/847969.png",
+        },
 
         // Store refresh token in DB
         refreshToken: {
@@ -41,7 +41,6 @@ const userSchema = new mongoose.Schema(
             default: "",
         },
 
-        // refresh token expiry store (if needed)
         refreshTokenExpiry: {
             type: Date,
             default: null,
@@ -56,18 +55,12 @@ const userSchema = new mongoose.Schema(
 userSchema.pre("save", async function () {
     if (!this.isModified("password")) return;
     this.password = await bcrypt.hash(this.password, 10);
-    // ❌ No need to call next()
-    // Reason: This is an async middleware. Mongoose automatically
-    // handles next() internally for async functions.
 });
 
-// 🔐 Compare password
 userSchema.methods.isPasswordCorrect = async function (password) {
-    return bcrypt.compare(password, this.password);
+    return await bcrypt.compare(password, this.password);
 };
 
-
-// Generate Access Token
 userSchema.methods.generateAccessToken = function () {
     return jwt.sign(
         {

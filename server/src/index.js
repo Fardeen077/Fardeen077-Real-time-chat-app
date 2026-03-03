@@ -21,7 +21,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/messages", messageRoutes);
-app.use(errorHandler());
+app.use(errorHandler);
 
 server.listen(PORT, () => {
     console.log(`⚙️ Server is running at port : ${PORT}`);
