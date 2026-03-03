@@ -19,8 +19,8 @@ app.use(cors({
 
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
-app.use("/api/auth", authRoutes);
-app.use("/api/messages", messageRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/messages", messageRoutes);
 app.use(errorHandler());
 
 server.listen(PORT, () => {
