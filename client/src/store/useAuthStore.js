@@ -56,14 +56,13 @@ const useAuthStore = create((set) => ({
         set({ isAuthLoading: true, authError: null });
         try {
             const response = await getMeApi();
-            set({ authUser: response.data, isAuth: true, isAuthLoading: false });
+            set({ authUser: response.data.user, isAuth: true, isAuthLoading: false });
             return response.data;
         } catch (error) {
             set({ isAuthLoading: false, authError: error?.response?.data?.message || "Failed to fetch" });
             throw error
         }
     },
-
 
     logout: async () => {
         set({ isAuthLoading: true, authError: null });
