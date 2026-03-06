@@ -5,14 +5,17 @@ import {
     updateProfileApi,
     getMeApi
 } from "../api/authApi"
+import connSocket from "../lib/socket";
 
 import { create } from "zustand";
 
-const useAuthStore = create((set) => ({
+const useAuthStore = create((set, get) => ({
     isAuth: false,
     isAuthLoading: false,
     authError: null,
     authUser: null,
+    onlineUsers: [],
+    socket: null,
 
     register: async (userData) => {
         set({ isAuthLoading: true, authError: null });
@@ -23,8 +26,9 @@ const useAuthStore = create((set) => ({
             });
             return response.data;
         } catch (error) {
-            set({ isAuthLoading: false, authError: error?.response?.data?.message || "Register failed" });
-            throw error
+            const message = error?.response?.data?.message || "Register Failed";
+            set({ isAuthLoading: false, authError: message });
+            throw new Error(message);
         }
     },
 
@@ -35,8 +39,9 @@ const useAuthStore = create((set) => ({
             set({ authUser: response.data, isAuth: true, isAuthLoading: false });
             return response.data;
         } catch (error) {
-            set({ isAuthLoading: false, authError: error?.response?.data?.message || "Login failed" });
-            throw error
+            const message = error?.response?.data?.message || "Login Failed";
+            set({ isAuthLoading: false, authError: message });
+            throw new Error(message);
         }
     },
 
@@ -47,8 +52,9 @@ const useAuthStore = create((set) => ({
             set({ authUser: response.data, isAuth: true, isAuthLoading: false });
             return response.data;
         } catch (error) {
-            set({ isAuthLoading: false, authError: error?.response?.data?.message || "Update profile failed" });
-            throw error
+            const message = error?.response?.data?.message || "Update Profile Failed";
+            set({ isAuthLoading: false, authError: message });
+            throw new Error(message);
         }
     },
 
@@ -59,8 +65,9 @@ const useAuthStore = create((set) => ({
             set({ authUser: response.data.user, isAuth: true, isAuthLoading: false });
             return response.data;
         } catch (error) {
-            set({ isAuthLoading: false, authError: error?.response?.data?.message || "Failed to fetch" });
-            throw error
+            const message = error?.response?.data?.message || "Internal Server Error";
+            set({ isAuthLoading: false, authError: message });
+            throw new Error(message);
         }
     },
 
@@ -71,9 +78,29 @@ const useAuthStore = create((set) => ({
             set({ authUser: null, isAuth: false, isAuthLoading: false });
             return response.data;
         } catch (error) {
-            set({ isAuthLoading: false, authError: error?.response?.data?.message || "Logout failed" });
-            throw error
+            const message = error?.response?.data?.message || "Logout Failed";
+            set({ isAuthLoading: false, authError: message });
+            throw new Error(message);
         }
+    },
+
+    connectSocket: () => {
+        const { authUser } = get();
+        if (!authUser || get().socket?.connected) return;
+
+        connSocket.io.opts.query = {
+            userId: userId
+        };
+        connSocket.connect();
+
+        set({ socket: connSocket });
+        socket.on("getOnlineUsers", (userId) => {
+            set({ onlineUsers: userId });
+        });
+    },
+
+    disconnectSocket: () => {
+        if (get().socket?.connected) get().socket.disconnect();
     },
 }));
 

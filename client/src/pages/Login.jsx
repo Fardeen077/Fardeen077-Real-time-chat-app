@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState,} from "react"
 import useAuthStore from "../store/useAuthStore";
 import { validateLogin } from "../validations/authValidation";
 import { Link, useNavigate } from "react-router-dom"
@@ -12,14 +12,11 @@ function Login() {
     const handleForm = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
     const login = useAuthStore((state) => state.login);
-    const authError = useAuthStore((state) => state.authError);
     const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
     const navigate = useNavigate();
 
-
     const handleLogin = async (e) => {
         e.preventDefault();
-        // console.log("Login button clicked");
         if (isAuthLoading) return;
 
         const validation = validateLogin(form);
@@ -30,12 +27,10 @@ function Login() {
         try {
             await login(form)
             toast.success("Login successfully");
-            console.log("click", login);
-
             navigate("/");
 
         } catch (error) {
-            toast.error(authError || "Internal Error");
+            toast.error(error.message);
         }
     };
 

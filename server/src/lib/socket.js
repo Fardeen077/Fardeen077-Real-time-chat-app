@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
@@ -10,7 +12,7 @@ const socketToUser = new Map();
 
 const io = new Server(server, {
     cors: {
-        origin: process.env.CLINET_URL,
+        origin: process.env.CLIENT_URL,
         methods: ["GET", "POST"],
     },
 });

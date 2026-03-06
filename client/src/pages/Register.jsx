@@ -13,7 +13,6 @@ function Register() {
     const handleForm = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
     const register = useAuthStore((state) => state.register);
-    const authError = useAuthStore((state) => state.authError);
     const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
     const navigate = useNavigate();
 
@@ -32,7 +31,7 @@ function Register() {
             navigate("/");
 
         } catch (error) {
-            toast.error(authError);
+            toast.error(error.message);
         }
     };
 
