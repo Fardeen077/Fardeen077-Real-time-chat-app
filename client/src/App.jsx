@@ -13,9 +13,20 @@ import ProtectedRouter from './components/ProtectedRouter';
 function App() {
     const getMe = useAuthStore((state) => state.getMe);
     const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
+    const connectSocket = useAuthStore((state)=> state.connectSocket);
+    const authUser = useAuthStore((state)=> state.authUser)
+    
     useEffect(() => {
         getMe()
-    }, [getMe]);
+    }, []);
+
+    useEffect(()=> {
+        if(authUser) {
+            connectSocket()
+            // console.log(authUser);
+        }
+    }, [authUser]);
+
     if (isAuthLoading) {
         return <span className="loading loading-spinner text-info"></span>
     };

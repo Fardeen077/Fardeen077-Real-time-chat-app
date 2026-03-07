@@ -6,7 +6,6 @@ import {
     getMeApi
 } from "../api/authApi"
 import connSocket from "../lib/socket";
-
 import { create } from "zustand";
 
 const useAuthStore = create((set, get) => ({
@@ -87,16 +86,21 @@ const useAuthStore = create((set, get) => ({
     connectSocket: () => {
         const { authUser } = get();
         if (!authUser || get().socket?.connected) return;
+        // console.log(authUser);
 
         connSocket.io.opts.query = {
-            userId: userId
+            userId: authUser._id,
         };
         connSocket.connect();
-
-        set({ socket: connSocket });
-        socket.on("getOnlineUsers", (userId) => {
-            set({ onlineUsers: userId });
+        // set({ socket: connSocket });
+        connSocket.on("getOnlineUsers", (userIds) => {
+            console.log("store userid", userIds);
+             console.log("socket connected:", connSocket.id)
+            console.log("Online users",onlineUsers);
+            
+            set({ onlineUsers: userIds });
         });
+        set({socket: connSocket})
     },
 
     disconnectSocket: () => {

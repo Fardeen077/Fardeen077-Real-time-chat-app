@@ -4,8 +4,9 @@ import {
     getUsersApi
 } from "../api/messageApi";
 import useAuthStore from "./useAuthStore";
+import {create} from "zustand"
 
-const useMessageStore = ((set, get) => ({
+const useMessageStore = create((set, get) => ({
     users: [],
     messages: [],
     selectUser: null,
@@ -45,7 +46,10 @@ const useMessageStore = ((set, get) => ({
         set({ isUsersLoading: true, isMessageError: null });
         try {
             const response = await getUsersApi();
+            console.log("store", response.data);
             set({ users: response.data, isUsersLoading: false });
+            console.log("store", response.data);
+            
         } catch (error) {
             const message = error?.response?.data?.message || "List not found"
             set({ isUsersLoading: false, isMessageError: message });
@@ -60,7 +64,7 @@ const useMessageStore = ((set, get) => ({
         const socket = useAuthStore.getState().socket;
         socket.on("newMessage", (newMessage) => {
             const isMessageSendFromSelectedUser = newMessage.senderId === selectUser._id;
-            if (!isMessageSendFromSelectedUser) return
+            if (!isMessageSendFromSelectedUser) return;
         });
         set({
             messages: [...get().messages, message],
@@ -70,7 +74,7 @@ const useMessageStore = ((set, get) => ({
     unsubscribeFromMessages: () => {
         const socket = useAuthStore.getState().socket;
         socket.off("newMessage");
-    }
+    },
 
 }));
 
