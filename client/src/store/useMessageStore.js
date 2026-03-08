@@ -4,7 +4,7 @@ import {
     getUsersApi
 } from "../api/messageApi";
 import useAuthStore from "./useAuthStore";
-import {create} from "zustand"
+import { create } from "zustand"
 
 const useMessageStore = create((set, get) => ({
     users: [],
@@ -22,7 +22,8 @@ const useMessageStore = create((set, get) => ({
                 messages: [...state.messages, response.data],
                 isMessageLoading: false
             }));
-            console.log(response);
+            // console.log(response);
+            return response.data;
         } catch (error) {
             const message = error?.response?.data?.message || "Message not send";
             set({ isMessageLoading: false, isMessageError: message });
@@ -35,6 +36,7 @@ const useMessageStore = create((set, get) => ({
         try {
             const response = await getMessagesApi(id);
             set({ message: response.data, isMessageLoading: false });
+            return response.data;
         } catch (error) {
             const message = error?.response?.data?.message || "Message not received"
             set({ isMessageLoading: false, isMessageError: message });
@@ -46,10 +48,8 @@ const useMessageStore = create((set, get) => ({
         set({ isUsersLoading: true, isMessageError: null });
         try {
             const response = await getUsersApi();
-            console.log("store", response.data);
             set({ users: response.data, isUsersLoading: false });
-            console.log("store", response.data);
-            
+            return response.data;
         } catch (error) {
             const message = error?.response?.data?.message || "List not found"
             set({ isUsersLoading: false, isMessageError: message });
@@ -65,9 +65,9 @@ const useMessageStore = create((set, get) => ({
         socket.on("newMessage", (newMessage) => {
             const isMessageSendFromSelectedUser = newMessage.senderId === selectUser._id;
             if (!isMessageSendFromSelectedUser) return;
-        });
-        set({
-            messages: [...get().messages, message],
+            set({
+                messages: [...get().messages, message],
+            });
         });
     },
 
@@ -76,6 +76,7 @@ const useMessageStore = create((set, get) => ({
         socket.off("newMessage");
     },
 
+    setSelectedUser: (selectUser) => set({ selectUser }),
 }));
 
 export default useMessageStore;

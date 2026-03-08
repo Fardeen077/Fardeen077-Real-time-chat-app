@@ -5,4 +5,4 @@ const connSocket = io(import.meta.env.VITE_SOCKET_URL, {
     autoConnect: false
 });
 
-export default connSocket
+export default connSocket;

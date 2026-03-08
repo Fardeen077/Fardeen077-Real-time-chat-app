@@ -4,13 +4,6 @@ import useAuthStore from '../../store/useAuthStore';
 import { FaRegUser } from "react-icons/fa";
 
 function UsersList() {
-    // const { selectUser, isUsersLoading, setSelectedUser } = useMessageStore((state) => ({
-    //     // getUsers: state.getUsers,
-    //     // users: state.users,
-    //     isUsersLoading: state.isUsersLoading,
-    //     selectUser: state.selectUser,
-    //     setSelectedUser: state.setSelectedUser
-    // }));
     const users = useMessageStore((state) => state.users);
     const getUsers = useMessageStore((state) => state.getUsers);
     const isUsersLoading = useMessageStore((state) => state.isUsersLoading);
@@ -23,9 +16,6 @@ function UsersList() {
 
     useEffect(() => {
         getUsers();
-        // console.log("users:", users);
-        // console.log("onlineUsers:", onlineUsers);
-        // console.log("filterUsers:", filterUsers);
     }, [getUsers]);
 
     console.log(onlineUsers);

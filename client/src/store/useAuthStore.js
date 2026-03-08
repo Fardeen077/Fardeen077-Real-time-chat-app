@@ -5,7 +5,7 @@ import {
     updateProfileApi,
     getMeApi
 } from "../api/authApi"
-import connSocket from "../lib/socket";
+import connSocket from "../lib/socket"
 import { create } from "zustand";
 
 const useAuthStore = create((set, get) => ({
@@ -84,27 +84,34 @@ const useAuthStore = create((set, get) => ({
     },
 
     connectSocket: () => {
-        const { authUser } = get();
-        if (!authUser || get().socket?.connected) return;
-        // console.log(authUser);
+        const { authUser, socket } = get();
+        if (!authUser || socket?.connected) return;
 
         connSocket.io.opts.query = {
             userId: authUser._id,
         };
+        connSocket.on("connect", () => {
+            // console.log("Socket connected! ID:", connSocket.id);
+        });
+
+        connSocket.on("connect_error", (err) => {
+            console.error("Socket failed to connect:", err.message);
+        });
+
         connSocket.connect();
-        // set({ socket: connSocket });
+        // connSocket.on("connect", () => console.log("Socket connected:", connSocket.id));
         connSocket.on("getOnlineUsers", (userIds) => {
-            console.log("store userid", userIds);
-             console.log("socket connected:", connSocket.id)
-            console.log("Online users",onlineUsers);
-            
+            // console.log("store userid", userIds);
+            // console.log("socket connected:", connSocket.id)
             set({ onlineUsers: userIds });
         });
-        set({socket: connSocket})
+        connSocket.emit("requestOnlineUsers");
+        set({ socket: connSocket })
     },
 
     disconnectSocket: () => {
-        if (get().socket?.connected) get().socket.disconnect();
+        const { socket } = get();
+        if (socket?.connected) socket.disconnect()
     },
 }));
 
