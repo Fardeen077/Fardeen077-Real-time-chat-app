@@ -19,7 +19,6 @@ function App() {
     useEffect(() => {
         if (authUser) {
             connectSocket()
-            console.log("authUserId",authUser._id);
         }
     }, [authUser]);
 

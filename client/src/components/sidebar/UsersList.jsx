@@ -18,8 +18,6 @@ function UsersList() {
         getUsers();
     }, [getUsers]);
 
-    console.log(onlineUsers);
-
     const filterUsers = showOnlineUsers ? users.filter((user) => onlineUsers.includes(user._id)) : users;
 
     if (isUsersLoading) return <div className="p-4">Loading...</div>;
