@@ -6,7 +6,7 @@ const sendMessageApi = async (id, messageData) => {
 };
 
 const getMessagesApi = async (id) => {
-    const response = await axiosInstance.get(`/messages/message/${id}`, id);
+    const response = await axiosInstance.get(`/messages/message/${id}`);
     return response.data;
 };
 

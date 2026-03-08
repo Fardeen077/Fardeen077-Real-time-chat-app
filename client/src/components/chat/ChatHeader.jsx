@@ -8,7 +8,7 @@ const ChatHeader = () => {
     // const authUser = useAuthStore((state) => state.authUser)
 
     const onlineUsers = useAuthStore((state) => state.onlineUsers);
-    console.log(selectUser?.profileImage);
+    // console.log(selectUser?.profileImage);
     // console.log(onlineUsers);
     // console.log(authUser);
 

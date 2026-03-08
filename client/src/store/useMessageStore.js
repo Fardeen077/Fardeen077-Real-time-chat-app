@@ -14,18 +14,21 @@ const useMessageStore = create((set, get) => ({
     isUsersLoading: false,
     isMessageError: null,
 
-    sendMessage: async (id, messageData) => {
+    sendMessage: async (messageData) => {
+        const { selectUser } = get();
+        if (!selectUser?._id) {
+            throw new Error("No user selected to send a message");
+        }
         set({ isMessageLoading: true, isMessageError: null });
         try {
-            const response = await sendMessageApi(id, messageData)
+            const response = await sendMessageApi(selectUser._id, messageData);
             set((state) => ({
                 messages: [...state.messages, response.data],
                 isMessageLoading: false
             }));
-            // console.log(response);
             return response.data;
         } catch (error) {
-            const message = error?.response?.data?.message || "Message not send";
+            const message = error?.response?.data?.message || "Message not sent";
             set({ isMessageLoading: false, isMessageError: message });
             throw new Error(message);
         };
@@ -35,7 +38,7 @@ const useMessageStore = create((set, get) => ({
         set({ isMessageLoading: true, isMessageError: null });
         try {
             const response = await getMessagesApi(id);
-            set({ message: response.data, isMessageLoading: false });
+            set({ messages: response.data, isMessageLoading: false });
             return response.data;
         } catch (error) {
             const message = error?.response?.data?.message || "Message not received"
@@ -66,7 +69,7 @@ const useMessageStore = create((set, get) => ({
             const isMessageSendFromSelectedUser = newMessage.senderId === selectUser._id;
             if (!isMessageSendFromSelectedUser) return;
             set({
-                messages: [...get().messages, message],
+                messages: [...get().messages, newMessage.message],
             });
         });
     },

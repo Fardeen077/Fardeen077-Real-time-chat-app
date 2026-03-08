@@ -9,6 +9,7 @@ import useAuthStore from './store/useAuthStore';
 import { useEffect } from 'react';
 import PublicRouter from './components/PublicRouter';
 import ProtectedRouter from './components/ProtectedRouter';
+import Navbar from './components/Navbar';
 
 function App() {
     const getMe = useAuthStore((state) => state.getMe);
@@ -32,6 +33,7 @@ function App() {
 
     return (
         <BrowserRouter>
+        <Navbar/>
             <Routes>
                 <Route element={<ProtectedRouter />}>
                     <Route path="/" element={<Home />} />
