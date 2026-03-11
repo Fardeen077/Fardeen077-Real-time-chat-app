@@ -93,7 +93,7 @@ function MessageInput() {
                     className='btn btn-sm btn-circle'
                     disabled={!text.trim() && !imagePreview}
                 >
-                    <IoSend />
+                    <IoSend className='text-sm'/>
                 </button>
             </form>
         </div>

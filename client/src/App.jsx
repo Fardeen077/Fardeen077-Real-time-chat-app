@@ -33,7 +33,7 @@ function App() {
 
     return (
         <BrowserRouter>
-        <Navbar/>
+            {authUser && <Navbar />}
             <Routes>
                 <Route element={<ProtectedRouter />}>
                     <Route path="/" element={<Home />} />

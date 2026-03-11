@@ -23,7 +23,7 @@ function UsersList() {
     if (isUsersLoading) return <div className="p-4">Loading...</div>;
 
     return (
-        <aside className='w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200'>
+        <aside className='w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200 overflow-y-auto'>
             <div className='border-b border-base-300 w-full p-5'>
                 <div className='flex items-center gap-2'>
                     <FaRegUser />
