@@ -3,7 +3,6 @@ import ChatHeader from './ChatHeader';
 import useMessageStore from '../../store/useMessageStore';
 import useAuthStore from '../../store/useAuthStore';
 import { useEffect, useRef } from 'react';
-import MessageInput from './MessageInput';
 import formatMessageTime from '../../lib/formatMessageTime';
 
 function Messages() {

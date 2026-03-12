@@ -19,18 +19,23 @@ const ChatHeader = () => {
                 <div className="flex items-center gap-3">
                     <div className="avatar">
                         <div className="size-10 rounded-full">
+
                             <img src={selectUser?.profileImage} alt={selectUser?.username} />
+                            {onlineUsers.includes(selectUser?._id) && (
+                                <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-black"></span>
+                            )}
                         </div>
                     </div>
 
                     <div>
                         <h3 className="font-medium">{selectUser?.username}</h3>
-                        <p className="text-sm text-base-content">{onlineUsers?.includes(selectUser?._id) ? "Online" : "Offline"}</p>
+                        <p className="text-sm text-base-content">{onlineUsers?.includes(selectUser?._id) ?
+                            "Online" : "Offline"}</p>
                     </div>
                 </div>
                 <button onClick={() => setSelectedUser(null)}><IoMdClose /></button>
             </div>
-        </div>
+        </div >
     )
 }
 export default ChatHeader;
