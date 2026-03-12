@@ -69,7 +69,7 @@ const useMessageStore = create((set, get) => ({
             const isMessageSendFromSelectedUser = newMessage.senderId === selectUser._id;
             if (!isMessageSendFromSelectedUser) return;
             set({
-                messages: [...get().messages, newMessage.message],
+                messages: [...get().messages, newMessage],
             });
         });
     },

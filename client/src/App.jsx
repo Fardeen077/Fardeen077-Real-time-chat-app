@@ -28,7 +28,9 @@ function App() {
     }, []);
 
     if (isAuthLoading) {
-        return <span className="loading loading-spinner text-info"></span>
+        return <div className='h-screen flex flex-col items-center justify-center'>
+            <span className="loading loading-spinner text-info"></span>
+        </div>
     };
 
     return (

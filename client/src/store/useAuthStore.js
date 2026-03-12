@@ -10,7 +10,8 @@ import { create } from "zustand";
 
 const useAuthStore = create((set, get) => ({
     isAuth: false,
-    isAuthLoading: false,
+    isAuthLoading: true,
+    isUpdatingProfile: false,
     authError: null,
     authUser: null,
     onlineUsers: [],
@@ -21,7 +22,7 @@ const useAuthStore = create((set, get) => ({
         try {
             const response = await registerApi(userData);
             set({
-                authUser: response.data, isAuth: true, isAuthLoading: false
+                authUser: response.data.user, isAuth: true, isAuthLoading: false
             });
             return response.data;
         } catch (error) {
@@ -35,7 +36,10 @@ const useAuthStore = create((set, get) => ({
         set({ isAuthLoading: true, authError: null });
         try {
             const response = await loginApi(userData);
-            set({ authUser: response.data, isAuth: true, isAuthLoading: false });
+            set({ authUser: response.data.user, isAuth: true, isAuthLoading: false });
+            // console.log(response.data);
+            // console.log(response);
+            // console.log(response.data.user);
             return response.data;
         } catch (error) {
             const message = error?.response?.data?.message || "Login Failed";
@@ -45,14 +49,16 @@ const useAuthStore = create((set, get) => ({
     },
 
     updateProfile: async (userData) => {
-        set({ isAuthLoading: true, authError: null });
+        set({ isUpdatingProfile: true, authError: null });
         try {
             const response = await updateProfileApi(userData);
-            set({ authUser: response.data, isAuth: true, isAuthLoading: false });
+            set({ authUser: response.data.user, isAuth: true, isUpdatingProfile: false });
+            // console.log(response.data.user);
+            // console.log(response);
             return response.data;
         } catch (error) {
             const message = error?.response?.data?.message || "Update Profile Failed";
-            set({ isAuthLoading: false, authError: message });
+            set({ isUpdatingProfile: false, authError: message });
             throw new Error(message);
         }
     },
@@ -100,7 +106,7 @@ const useAuthStore = create((set, get) => ({
 
         connSocket.connect();
         // connSocket.on("connect", () => console.log("Socket connected:", connSocket.id));
-        connSocket.on("getOnlineUsers", (userIds) => {
+        connSocket.off("getOnlineUsers").on("getOnlineUsers", (userIds) => {
             // console.log("store userid", userIds);
             // console.log("socket connected:", connSocket.id)
             set({ onlineUsers: userIds });

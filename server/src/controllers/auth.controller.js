@@ -53,7 +53,7 @@ const registerUser = asyncHandler(async (req, res) => {
         username: username?.toLowerCase() || "",
         email: email?.toLowerCase() || "",
         password,
-        avatar: avatarUrl,
+        profileImage: avatarUrl,
     });
 
     const { accessToken, refreshToken } = await generateAccessTokenAndRefreshToken(user._id);
@@ -132,8 +132,9 @@ const updateProfile = async (req, res) => {
         const uploadResponse = await cloudinary.uploader.upload(profileImage);
         const updateUser = await User.findByIdAndUpdate(userId, { profileImage: uploadResponse.secure_url }, { new: true });
 
-        res.status(200).json(updateUser)
+        return res.status(200).json(new ApiResponse(200, { user: updateUser }, "Profile updated successfully"));
     } catch (error) {
+        console.error("Error in updateProfile:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 };
