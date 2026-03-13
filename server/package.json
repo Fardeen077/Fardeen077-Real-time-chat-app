@@ -1,9 +1,9 @@
 {
   "scripts": {
     "dev": "nodemon src/index.js",
-     "start": "node src/index.js"
+    "start": "node src/index.js"
   },
-   "type": "module",
+  "type": "module",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.8.0",
