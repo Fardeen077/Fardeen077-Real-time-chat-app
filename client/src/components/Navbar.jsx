@@ -3,6 +3,7 @@ import useAuthStore from '../store/useAuthStore'
 import toast from 'react-hot-toast';
 import { RxAvatar } from "react-icons/rx";
 import { Link } from 'react-router-dom';
+import { CiChat1 } from "react-icons/ci";
 
 function Navbar() {
     const logout = useAuthStore((state) => state.logout);
@@ -22,8 +23,8 @@ function Navbar() {
 
                 {/* Logo */}
                 <Link to={"/"}>
-                    <div className="text-xl font-semibold text-primary">
-                        Logo
+                    <div className="font-semibold text-primary">
+                        <CiChat1 className='size-10'/>
                     </div>
                 </Link>
 

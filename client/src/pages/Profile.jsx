@@ -27,12 +27,9 @@ function Profile() {
         }
         render.readAsDataURL(file);
     }
-    if (isUpdatingProfile) return <div className='flex items-center justify-center mt-52'>
-        <span className="loading loading-ball loading-xs"></span>
-        <span className="loading loading-ball loading-sm"></span>
-        <span className="loading loading-ball loading-md"></span>
-        <span className="loading loading-ball loading-lg"></span>
-        <span className="loading loading-ball loading-xl"></span>
+    if (isUpdatingProfile) return <div className='flex items-center justify-center mt-52 gap-2'>
+        <span className="loading loading-spinner text-info"> </span>
+        <p>Uploading image...</p>
     </div>
     return (
         <div className='flex p-10 justify-center'>
