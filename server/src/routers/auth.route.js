@@ -1,11 +1,11 @@
 import { protectRoute } from "../middlewares/auth.middleware.js"
 import {
-    registerUser,
-    checkAuth,
-    loginUser,
-    updateProfile,
-    logoutUser,
-} from "../controllers/auth.Controller.js";
+      registerUser,
+        checkAuth,
+        loginUser,
+        updateProfile,
+        logoutUser,
+} from "../controllers/auth.controller.js"
 import { Router } from "express";
 
 
