@@ -12,7 +12,7 @@ const getUserForSidebar = asyncHandler(async (req, res) => {
         throw new ApiError(401, "Unauthorized");
     }
     const filteredUser = await User.find({ _id: { $ne: logggedInUserId } }).select("-password");
-
+    console.log("Cookies before send =>", req.cookies);
     return res.status(200).json(
         new ApiResponse(200, filteredUser, "Users fetched successfully")
     );
@@ -57,6 +57,7 @@ const sendMessage = asyncHandler(async (req, res) => {
             senderId,
         });
     }
+    console.log("Cookies before send =>", req.cookies);
     return res.status(201).json(
         new ApiResponse(201, newMessage, "Message sent successfully")
     );
@@ -73,6 +74,7 @@ const getMessages = asyncHandler(async (req, res) => {
             { senderId: userToChatId, receivedId: myId, }
         ]
     }).sort({ createdAt: 1 });
+    console.log("Cookies before send =>", req.cookies);
     return res.status(200).json(
         new ApiResponse(200, message, "Messages fetched successfully"))
 });

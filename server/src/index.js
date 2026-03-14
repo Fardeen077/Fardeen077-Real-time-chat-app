@@ -15,7 +15,10 @@ const PORT = process.env.PORT;
 app.use(cors({
     origin: process.env.CLIENT_URL,
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
+app.use("*", cors());
 
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());

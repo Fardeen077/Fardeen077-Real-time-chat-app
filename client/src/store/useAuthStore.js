@@ -68,6 +68,8 @@ const useAuthStore = create((set, get) => ({
         try {
             const response = await getMeApi();
             set({ authUser: response.data.user, isAuth: true, isAuthLoading: false });
+            console.log(error);
+            
             return response.data;
         } catch (error) {
             const message = error?.response?.data?.message || "Internal Server Error";

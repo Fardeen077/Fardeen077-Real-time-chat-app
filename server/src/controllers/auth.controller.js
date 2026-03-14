@@ -14,6 +14,8 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
 
         user.refreshToken = refreshToken;
         await user.save({ validateBeforeSave: false });
+
+        console.log("AccessToken generated =>", accessToken);
         return { accessToken, refreshToken }
     } catch (error) {
         throw new ApiError(400, "Error generating token")
@@ -68,6 +70,7 @@ const registerUser = asyncHandler(async (req, res) => {
         secure: true,
         sameSite: "none"
     }
+    console.log("AccessToken generated =>", accessToken);
     return res.status(201)
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", refreshToken, options)
@@ -97,6 +100,7 @@ const loginUser = asyncHandler(async (req, res) => {
         secure: true,
         sameSite: "none"
     }
+    console.log("AccessToken generated =>", accessToken);
     return res.status(200)
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", refreshToken, options)
@@ -115,6 +119,7 @@ const logoutUser = asyncHandler(async (req, res) => {
         secure: true,
         sameSite: "none"
     }
+    console.log("AccessToken generated =>", accessToken);
     return res.status(200)
         .clearCookie("accessToken", options)
         .clearCookie("refreshToken", options)
@@ -132,6 +137,7 @@ const updateProfile = async (req, res) => {
         const uploadResponse = await cloudinary.uploader.upload(profileImage);
         const updateUser = await User.findByIdAndUpdate(userId, { profileImage: uploadResponse.secure_url }, { new: true });
 
+        console.log("AccessToken generated =>", accessToken);
         return res.status(200).json(new ApiResponse(200, { user: updateUser }, "Profile updated successfully"));
     } catch (error) {
         console.error("Error in updateProfile:", error);
@@ -144,6 +150,7 @@ const checkAuth = (req, res) => {
         res.status(200).json(
             new ApiResponse(200, { user: req.user }, "User authenticated")
         );
+        console.log("AccessToken generated =>", accessToken);
     } catch (error) {
         console.log("ERROR in checkAuth controller", error.message);
         res.status(500).json({
