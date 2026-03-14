@@ -18,7 +18,6 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-app.options("/*", cors());
 
 app.use(express.json({ limit: "10mb" }));
 app.use(cookieParser());
