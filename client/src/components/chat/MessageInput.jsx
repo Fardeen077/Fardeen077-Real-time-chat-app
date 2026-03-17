@@ -67,7 +67,7 @@ function MessageInput() {
             )}
 
             <form onSubmit={handleSendMessage}
-                className='flex items-center gap-2'>
+                className='flex items-center gap-2 w-full'>
                 <div className='flex-1 flex gap-2'>
                     <input type="text"
                         placeholder='Type a message'
@@ -84,7 +84,7 @@ function MessageInput() {
 
                     <button
                         type='button'
-                        className={`hidden sm:flex btn btn-circle ${imagePreview ? "text-emerald-500" : "text-zinc-500"}`} onClick={() => fileInputRef.current?.click()}>
+                        className={`sm:flex btn btn-circle ${imagePreview ? "text-emerald-500" : "text-zinc-500"}`} onClick={() => fileInputRef.current?.click()}>
                         <MdAttachFile />
                     </button>
                 </div>
