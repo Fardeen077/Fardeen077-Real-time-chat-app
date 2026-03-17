@@ -39,6 +39,7 @@ const useMessageStore = create((set, get) => ({
         try {
             const response = await getMessagesApi(id);
             set({ messages: response.data, isMessageLoading: false });
+            // console.log(response.data);
             return response.data;
         } catch (error) {
             const message = error?.response?.data?.message || "Message not received"
@@ -60,19 +61,45 @@ const useMessageStore = create((set, get) => ({
         }
     },
 
-    subscribeToMessages: () => {
-        const { selectUser } = get();
-        if (!selectUser) return;
+    // subscribeToMessages: () => {
+    //     const { selectUser } = get();
+    //     if (!selectUser) return;
 
-        const socket = useAuthStore.getState().socket;
-        socket.on("newMessage", (newMessage) => {
-            const isMessageSendFromSelectedUser = newMessage.senderId === selectUser._id;
-            if (!isMessageSendFromSelectedUser) return;
-            set({
-                messages: [...get().messages, newMessage],
-            });
+    //     const socket = useAuthStore.getState().socket;
+    //     if(!socket) return;
+
+    //     socket.on("newMessage", (newMessage) => {
+    //         const isMessageSendFromSelectedUser = newMessage.senderId === selectUser._id;
+    //         if (!isMessageSendFromSelectedUser) return;
+    //         set({
+    //             messages: [...get().messages, newMessage],
+    //         });
+    //     });
+    // },
+
+    subscribeToMessages: () => {
+    const socket = useAuthStore.getState().socket;
+    if (!socket) return;
+
+    socket.off("newMessage").on("newMessage", (data) => {
+        const newMessage = data.message || data;
+
+        const currentUser = get().selectUser;
+        // const myId = useAuthStore.getState().authUser._id;
+
+        if (!currentUser) return;
+
+        const isRelevant =
+            newMessage.senderId === currentUser._id ||
+            newMessage.receivedId === currentUser._id;
+
+        if (!isRelevant) return;
+
+        set({
+            messages: [...get().messages, newMessage],
         });
-    },
+    });
+},
 
     unsubscribeFromMessages: () => {
         const socket = useAuthStore.getState().socket;

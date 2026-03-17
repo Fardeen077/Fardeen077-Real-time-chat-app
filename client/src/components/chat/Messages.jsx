@@ -61,7 +61,6 @@ function Messages() {
                     </div>
                 </div>
             ))}
-            {/* <MessageInput /> */}
         </div>
     );
 }

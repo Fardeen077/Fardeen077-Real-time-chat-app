@@ -69,7 +69,7 @@ const useAuthStore = create((set, get) => ({
             const response = await getMeApi();
             set({ authUser: response.data.user, isAuth: true, isAuthLoading: false });
             console.log(error);
-            
+
             return response.data;
         } catch (error) {
             const message = error?.response?.data?.message || "Internal Server Error";
@@ -82,6 +82,7 @@ const useAuthStore = create((set, get) => ({
         set({ isAuthLoading: true, authError: null });
         try {
             const response = await logoutApi();
+            get().disconnectSocket();
             set({ authUser: null, isAuth: false, isAuthLoading: false });
             return response.data;
         } catch (error) {
@@ -98,8 +99,9 @@ const useAuthStore = create((set, get) => ({
         connSocket.io.opts.query = {
             userId: authUser._id,
         };
+
         connSocket.on("connect", () => {
-            // console.log("Socket connected! ID:", connSocket.id);
+            console.log("Socket connected! ID:", connSocket.id);
         });
 
         connSocket.on("connect_error", (err) => {
@@ -107,10 +109,9 @@ const useAuthStore = create((set, get) => ({
         });
 
         connSocket.connect();
-        // connSocket.on("connect", () => console.log("Socket connected:", connSocket.id));
         connSocket.off("getOnlineUsers").on("getOnlineUsers", (userIds) => {
-            // console.log("store userid", userIds);
-            // console.log("socket connected:", connSocket.id)
+            console.log("store userid", userIds);
+            console.log("socket connected:", connSocket.id)
             set({ onlineUsers: userIds });
         });
         connSocket.emit("requestOnlineUsers");

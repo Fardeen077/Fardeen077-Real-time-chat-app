@@ -15,7 +15,6 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
         user.refreshToken = refreshToken;
         await user.save({ validateBeforeSave: false });
 
-        console.log("AccessToken generated =>", accessToken);
         return { accessToken, refreshToken }
     } catch (error) {
         throw new ApiError(400, "Error generating token")
@@ -23,7 +22,6 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-    console.log("Incoming data:", req.body);
     const { email, username, password } = req.body;
 
     // VALIDATION
@@ -70,7 +68,6 @@ const registerUser = asyncHandler(async (req, res) => {
         secure: true,
         sameSite: "none"
     }
-    console.log("AccessToken generated =>", accessToken);
     return res.status(201)
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", refreshToken, options)
@@ -100,7 +97,7 @@ const loginUser = asyncHandler(async (req, res) => {
         secure: true,
         sameSite: "none"
     }
-    console.log("AccessToken generated =>", accessToken);
+
     return res.status(200)
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", refreshToken, options)
@@ -119,45 +116,37 @@ const logoutUser = asyncHandler(async (req, res) => {
         secure: true,
         sameSite: "none"
     }
-    console.log("AccessToken generated =>", accessToken);
     return res.status(200)
         .clearCookie("accessToken", options)
         .clearCookie("refreshToken", options)
         .json(new ApiResponse(200, {}, "User logged out successfully"))
 });
 
-const updateProfile = async (req, res) => {
-    try {
-        const { profileImage } = req.body;
-        const userId = req.user._id;
+const updateProfile = asyncHandler(async (req, res) => {
+    const { profileImage } = req.body;
+    const userId = req.user._id;
 
-        if (!profileImage) {
-            return res.status(400).json({ message: "Profile pic is required" });
-        }
-        const uploadResponse = await cloudinary.uploader.upload(profileImage);
-        const updateUser = await User.findByIdAndUpdate(userId, { profileImage: uploadResponse.secure_url }, { new: true });
-
-        console.log("AccessToken generated =>", accessToken);
-        return res.status(200).json(new ApiResponse(200, { user: updateUser }, "Profile updated successfully"));
-    } catch (error) {
-        console.error("Error in updateProfile:", error);
-        res.status(500).json({ message: "Internal server error" });
+    if (!profileImage) {
+        return res.status(400).json({ message: "Profile pic is required" });
     }
-};
+    const uploadResponse = await cloudinary.uploader.upload(profileImage);
+    const updateUser = await User.findByIdAndUpdate(userId, { profileImage: uploadResponse.secure_url }, { new: true });
 
-const checkAuth = (req, res) => {
+    return res.status(200).json(new ApiResponse(200, { user: updateUser }, "Profile updated successfully"));
+});
+
+const checkAuth = asyncHandler(async (req, res) => {
     try {
         res.status(200).json(
             new ApiResponse(200, { user: req.user }, "User authenticated")
         );
-        console.log("AccessToken generated =>", accessToken);
     } catch (error) {
-        console.log("ERROR in checkAuth controller", error.message);
         res.status(500).json({
             message: "Internal Server Error"
         });
     }
-}
+});
+
 export {
     generateAccessTokenAndRefreshToken,
     registerUser,

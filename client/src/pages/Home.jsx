@@ -6,7 +6,7 @@ import useMessageStore from '../store/useMessageStore'
 function Home() {
     const selectUser = useMessageStore(state => state.selectUser)
     return (
-        <div className="flex justify-center lg:mt-2">
+        <div className="flex justify-center lg:mt-2 ">
             <div className="bg-base-100 lg:rounded-lg shadow-cl w-full max-w-6xl h-[100vh] lg:h-[calc(100vh-6rem)]">
                 <div className="flex rounded-lg overflow-hidden h-full">
                     <UsersList />
